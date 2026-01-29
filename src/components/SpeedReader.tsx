@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { WordDisplay } from './WordDisplay';
+import { TextProgression } from './TextProgression';
 import { parseText, ParsedWord, calculateTotalTime } from '../utils/wordParser';
 import { Play, Pause, RotateCcw, Rewind } from 'lucide-react';
 
@@ -13,10 +14,13 @@ export function SpeedReader({ text, onComplete }: SpeedReaderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(300);
+  const [showControls, setShowControls] = useState(true);
 
   const timeoutRef = useRef<number>();
   const startTimeRef = useRef<number>(0);
   const elapsedTimeRef = useRef<number>(0);
+  const hideTimerRef = useRef<number>();
+  const controlsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (text.trim()) {
@@ -88,6 +92,38 @@ export function SpeedReader({ text, onComplete }: SpeedReaderProps) {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [togglePlayPause]);
 
+  useEffect(() => {
+    if (isPlaying) {
+      setShowControls(false);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    } else {
+      setShowControls(true);
+    }
+  }, [isPlaying]);
+
+  const handleControlsMouseEnter = () => {
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    setShowControls(true);
+  };
+
+  const handleControlsMouseLeave = () => {
+    if (isPlaying) {
+      hideTimerRef.current = window.setTimeout(() => {
+        setShowControls(false);
+      }, 2000);
+    }
+  };
+
+  const handleControlsInteraction = () => {
+    setShowControls(true);
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    if (isPlaying) {
+      hideTimerRef.current = window.setTimeout(() => {
+        setShowControls(false);
+      }, 2000);
+    }
+  };
+
   const progress = words.length > 0 ? (currentIndex / words.length) * 100 : 0;
   const totalTime = words.length > 0 ? calculateTotalTime(words, wpm) : 0;
   const elapsedSeconds = (currentIndex / words.length) * totalTime;
@@ -111,7 +147,19 @@ export function SpeedReader({ text, onComplete }: SpeedReaderProps) {
         <WordDisplay word={currentWord.text} orpIndex={currentWord.orpIndex} />
       </div>
 
-      <div className="px-8 pb-8 space-y-6">
+      <TextProgression words={words} currentIndex={currentIndex} />
+
+      <div
+        ref={controlsRef}
+        className="px-8 pb-8 space-y-6 transition-opacity duration-300"
+        style={{
+          opacity: showControls ? 1 : 0.5,
+          pointerEvents: showControls ? 'auto' : 'auto',
+        }}
+        onMouseEnter={handleControlsMouseEnter}
+        onMouseLeave={handleControlsMouseLeave}
+        onClick={handleControlsInteraction}
+      >
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-gray-400">
             <span>Elapsed: {formatTime(elapsedSeconds)}</span>
