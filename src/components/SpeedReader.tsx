@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { WordDisplay } from './WordDisplay';
-import { TextProgression } from './TextProgression';
 import { parseText, ParsedWord, calculateTotalTime } from '../utils/wordParser';
 import { Play, Pause, RotateCcw, Rewind } from 'lucide-react';
 
@@ -14,7 +13,7 @@ export function SpeedReader({ text, onComplete }: SpeedReaderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(300);
-  const [showControls, setShowControls] = useState(true);
+  const [showControls, setShowControls] = useState(false);
 
   const timeoutRef = useRef<number>();
   const startTimeRef = useRef<number>(0);
@@ -93,13 +92,13 @@ export function SpeedReader({ text, onComplete }: SpeedReaderProps) {
   }, [togglePlayPause]);
 
   useEffect(() => {
-    if (isPlaying) {
-      setShowControls(false);
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    } else {
-      setShowControls(true);
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    if (showControls) {
+      hideTimerRef.current = window.setTimeout(() => {
+        setShowControls(false);
+      }, 6000);
     }
-  }, [isPlaying]);
+  }, [showControls]);
 
   const handleControlsMouseEnter = () => {
     if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
@@ -107,21 +106,14 @@ export function SpeedReader({ text, onComplete }: SpeedReaderProps) {
   };
 
   const handleControlsMouseLeave = () => {
-    if (isPlaying) {
-      hideTimerRef.current = window.setTimeout(() => {
-        setShowControls(false);
-      }, 2000);
-    }
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = window.setTimeout(() => {
+      setShowControls(false);
+    }, 6000);
   };
 
   const handleControlsInteraction = () => {
     setShowControls(true);
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    if (isPlaying) {
-      hideTimerRef.current = window.setTimeout(() => {
-        setShowControls(false);
-      }, 2000);
-    }
   };
 
   const progress = words.length > 0 ? (currentIndex / words.length) * 100 : 0;
@@ -146,8 +138,6 @@ export function SpeedReader({ text, onComplete }: SpeedReaderProps) {
       <div className="flex-1 flex items-center justify-center">
         <WordDisplay word={currentWord.text} orpIndex={currentWord.orpIndex} />
       </div>
-
-      <TextProgression words={words} currentIndex={currentIndex} />
 
       <div
         ref={controlsRef}

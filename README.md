@@ -39,6 +39,12 @@ Context-aware timing adjustments for improved comprehension:
 - **Remaining time**: Estimates time to completion
 - **Real-time updates**: All metrics update dynamically
 
+### 7. Smart Control Interface
+- **Dynamic fade behavior**: Progress bar, speed slider, and playback controls fade to 50% opacity by default for a clean, immersive reading experience
+- **Smart reveal**: Controls automatically become fully visible (100% opacity) on hover or click
+- **Auto-fade timer**: Controls return to 50% opacity after 6 seconds of inactivity
+- **Unobtrusive design**: Minimizes visual clutter while keeping controls easily accessible
+
 ## Technology Stack
 
 - **React 18**: Modern component-based UI
@@ -116,6 +122,25 @@ The Optimal Recognition Point is the character position where the eye naturally 
 - Visual guide markers appear above and below center
 - Monospaced font ensures consistent spacing
 
+## UI/UX Effects & Animations
+
+### Control Panel Fade Behavior
+The control interface uses an intelligent fade system to reduce visual clutter during reading:
+
+- **Default state**: Controls display at 50% opacity
+- **Interaction**: Hovering over or clicking on controls reveals them at full opacity
+- **Auto-return**: After 6 seconds of inactivity, controls fade back to 50%
+- **Smooth transitions**: 300ms fade duration for fluid visual feedback
+
+This design provides a minimalist aesthetic while maintaining immediate access to controls.
+
+### Word Display Animations
+Each word transition features a subtle animation:
+
+- **Flash animation**: 0.1s fade-in and scale-up for each new word
+- **Smooth entry**: Words appear with a slight zoom effect for visual continuity
+- **Consistent pacing**: Animation completes well before the next word displays
+
 ## CSS Animations
 
 ```css
@@ -168,6 +193,15 @@ npm run build
    - Click "Restart" to begin again
 5. **Monitor progress**: Watch the progress bar and time estimates at the bottom
 
+### Control Panel Behavior
+
+The control panel (progress bar, speed slider, and playback buttons) is designed to stay out of your way:
+
+- **Faded by default**: Controls display at 50% opacity to minimize visual distraction
+- **Reveal on demand**: Move your mouse over the controls or click them to reveal at full opacity
+- **Auto-fade**: After 6 seconds without interaction, controls fade back to 50%
+- **Always functional**: All controls remain fully interactive, regardless of opacity level
+
 ## Tips for Effective Speed Reading
 
 - **Start slow**: Begin at 250-300 WPM and gradually increase
@@ -203,13 +237,16 @@ SwiftRead uses a dark theme by default to reduce eye strain during extended read
 ## Future Enhancements
 
 Potential features for future versions:
-- EPUB file support with better parsing
-- Reading statistics and history
-- Customizable color themes
-- Multiple ORP highlighting styles
-- Comprehension tests
-- Cloud sync for progress
-- Mobile app version
+- **Live text progression**: Real-time view of the surrounding text with dynamic scrolling and word highlighting (code already implemented, awaiting UI integration)
+- **EPUB file support**: Better parsing for eBook formats
+- **Reading statistics**: Track reading speed improvements and sessions over time
+- **Customizable color themes**: User-selectable color schemes for different preferences
+- **Multiple ORP highlighting styles**: Alternative focal point visualization options
+- **Comprehension tests**: Built-in comprehension quizzes after reading sessions
+- **Cloud sync**: Save reading progress and settings across devices
+- **Mobile app version**: Native mobile application with touch-optimized controls
+- **Advanced smart slowing**: Machine learning-based difficulty detection
+- **Dictionary integration**: Quick word definitions on hover/click
 
 ## License
 
